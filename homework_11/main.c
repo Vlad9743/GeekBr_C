@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
         {
             case 'h':
             {
-                need_help = 1;
+                //need_help = 1;
                 break;
             }
             case 'f':
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
                 if (month_for_analisys < 1 || month_for_analisys > 12)
                 {
                     printf("Wrong month number. Input 1 ... 12.\n");
-                    need_help = 1;
+                    //need_help = 1;
                 }
                 else
                 {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
             }
             case '?':
             {
-                need_help = 1;
+                //need_help = 1;
                 break;
             }
         }
@@ -73,7 +73,8 @@ int main(int argc, char *argv[])
         if (input_file != NULL)
         {
             __int64_t number_of_records = count_strings_number(input_file);
-            struct data_record_t data_array[number_of_records];
+            //struct data_record_t data_array[number_of_records];
+            struct data_record_t *data_array = malloc(number_of_records * sizeof(struct data_record_t));
             int actual_records = parse_file(input_file, data_array, number_of_records);
 
             if (month_for_analisys != 0)
