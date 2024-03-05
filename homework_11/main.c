@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     int key=0;
     char *filename;
     int month_for_analisys;
-    int need_help = 0;
+    int need_help = 1;
 
     opterr = 0;
 
@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
             }
             case 'f':
             {
+                need_help = 0;
                 filename = optarg;
                 break;
             }
@@ -37,6 +38,10 @@ int main(int argc, char *argv[])
                 {
                     printf("Wrong month number. Input 1 ... 12.\n");
                     need_help = 1;
+                }
+                else
+                {
+                    need_help = 0;
                 }
                 break;
             }
