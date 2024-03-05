@@ -2,7 +2,7 @@
 
 int count_strings_number(FILE *file_name)
 {   
-    int strings_number = 0;
+    __int64_t strings_number = 0;
     char temp_strinng[RECORD_LENGTH];
             
     while (fgets(temp_strinng, RECORD_LENGTH, file_name) != NULL)
@@ -125,17 +125,20 @@ void full_temp_parameters(struct data_record_t data_array[], int records_number)
 
     int year_max_temp = -99;
     int year_min_temp = 99;
-    int year_avg_temp = 0;
+    int actual_month = 12;
+    float year_avg_temp = 0;
     for (int i = 0; i < 12; i++)
     {
         if (charecteristics[i].month_records == 0)
         {
             printf("No records for month %d.\n", i + 1);
+            charecteristics[i].month_avg_temp = 0;
+            actual_month--;
         }
         else
         {
             printf("Month %d. Max temp: %d.", i + 1, charecteristics[i].month_max_temp);
-            printf("Min temp: %d.", charecteristics[i].month_min_temp);
+            printf("Min temp: %d. ", charecteristics[i].month_min_temp);
             printf("Avg temp: %.3f\n", charecteristics[i].month_avg_temp/charecteristics[i].month_records);
         }
 
@@ -147,9 +150,13 @@ void full_temp_parameters(struct data_record_t data_array[], int records_number)
         {
             year_min_temp = charecteristics[i].month_min_temp;
         }
-        year_avg_temp += charecteristics[i].month_avg_temp;
+        if ((charecteristics[i].month_records != 0))
+        {
+            year_avg_temp += charecteristics[i].month_avg_temp/charecteristics[i].month_records;
+        }
     }
+    year_avg_temp /= actual_month;
 
     printf("============================================\n");
-    printf("Year max temp: %d. Year min temp: %d. Year average temp: %.3f\n", year_max_temp, year_min_temp, year_avg_temp/12.0);
+    printf("Year max temp: %d. Year min temp: %d. Year average temp: %.6f\n", year_max_temp, year_min_temp, year_avg_temp);
 }

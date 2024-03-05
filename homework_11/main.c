@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
         if (input_file != NULL)
         {
-            int number_of_records = count_strings_number(input_file);
+            __int64_t number_of_records = count_strings_number(input_file);
             struct data_record_t data_array[number_of_records];
             int actual_records = parse_file(input_file, data_array, number_of_records);
 
