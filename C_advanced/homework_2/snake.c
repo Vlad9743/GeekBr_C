@@ -128,35 +128,40 @@ snake_t moveSnake(snake_t snake)
 	return snake;
 }
 
+snake_t turnSnake(snake_t snake, char key)
+{
+	if ((key == 'a' || key == 'A') && (snake.direction != 3))
+    {
+        snake.direction = 1;
+    }
+    else if ((key == 'w' || key == 'W') && (snake.direction != 4))
+    {
+        snake.direction = 2;
+    }
+    else if ((key == 'd' || key == 'D') && (snake.direction != 1))
+    {
+        snake.direction = 3;
+    }
+    else if ((key == 's' || key == 'S') && (snake.direction != 2))
+    {
+        snake.direction = 4;
+    }
 
-int main(){
+	return snake;
+}
+
+
+int main(void)
+{
 
 	struct snake_t snake = initSnake( 10, 5, 5);
 	printSnake(snake);
+    char dir_key = 'a';
 
-    char key = 'a';
-
-while(1)
+	while(1)
 	{
-        key = getch();
-		
-        if ((key == 'a' || key == 'A') && (snake.direction != 3))
-        {
-            snake.direction = 1;
-        }
-        else if ((key == 'w' || key == 'W') && (snake.direction != 4))
-        {
-            snake.direction = 2;
-        }
-        else if ((key == 'd' || key == 'D') && (snake.direction != 1))
-        {
-            snake.direction = 3;
-        }
-        else if ((key == 's' || key == 'S') && (snake.direction != 2))
-        {
-            snake.direction = 4;
-        }
-
+        dir_key = getch();
+        snake = turnSnake(snake, dir_key);
 		snake = moveSnake(snake);
 		//sleep(1);
 		printSnake(snake);
