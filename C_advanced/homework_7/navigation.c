@@ -1,9 +1,11 @@
 #include "navigation.h"
 
+//отрисовка поля с тыквами и дронами
 void printPumpkinField(drone_t droneArray[], int droneNumber, pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
-	char matrix[MAX_X][MAX_Y];
+	char matrix[MAX_X][MAX_Y];// массив клеток поля
 
+    //копирует в массив поля символы тыкв
 	for (int i = 0; i < MAX_X; i++)
 	{
 		for (int j = 0; j < MAX_Y; j++)
@@ -12,6 +14,7 @@ void printPumpkinField(drone_t droneArray[], int droneNumber, pumpkin_t pumpkinA
 		}
 	}
 
+    //копирует в массив поля символы дронов и тележек
 	for (int d = 0; d < droneNumber; d++)
 	{
 		matrix[droneArray[d].x][droneArray[d].y] = '#';
@@ -21,6 +24,8 @@ void printPumpkinField(drone_t droneArray[], int droneNumber, pumpkin_t pumpkinA
 		}
 	}
 
+    //выводит в консоль массив поля в соответствии с принятой цветовой маркировкой
+    //зеленый - незрелая тыква, красный - зрелая тыква, синий - дрон или тележка
 	for (int j = 0; j < MAX_Y; ++j){
 		for (int i = 0; i < MAX_X; ++i)
 		{
@@ -52,6 +57,7 @@ void printPumpkinField(drone_t droneArray[], int droneNumber, pumpkin_t pumpkinA
 	}
 }
 
+//переместит дрон на одну клетку в текущем направлении
 drone_t moveDrone(drone_t drone)
 {
     int stepX = 0;
@@ -80,6 +86,7 @@ drone_t moveDrone(drone_t drone)
         break;
     }
 
+    //перемещение хвоста
     for (int i = drone.carts_number - 1; i > 0; i--)
     {
 		drone.carts[i] = drone.carts[i-1];
@@ -87,8 +94,9 @@ drone_t moveDrone(drone_t drone)
 	drone.carts[0].x = drone.x;
 	drone.carts[0].y = drone.y;
 	
+    //премещение головы по вертикали
 	drone.y = drone.y - stepY;
-	
+	//зацикливание дрона при достижении верхней и нижней границ поля
 	if (drone.y < 0)
     {
 		drone.y = MAX_Y - 1;
@@ -98,8 +106,9 @@ drone_t moveDrone(drone_t drone)
 		drone.y = 1;
 	}
 
+    //перемещение головы по горизонтали
     drone.x = drone.x - stepX;
-	
+	//зацикливание дрона при достижении левой и правой границ поля
 	if (drone.x < 0){
 		drone.x = MAX_X - 1;
 	}
@@ -111,6 +120,7 @@ drone_t moveDrone(drone_t drone)
 	return drone;
 }
 
+// находит ближайшую к дрону спелую тыкву на поле
 target_t findClosestPumpkin(drone_t drone, pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
 	int distance_X;
@@ -138,10 +148,10 @@ target_t findClosestPumpkin(drone_t drone, pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 			}
 		}
 	}
-
 	return target;
 }
 
+//находит ближайшую к дрону спелую тыкву взаданной области
 target_t findClosestPumpkin_in_zone(drone_t drone, pumpkin_t pumpkinArray[MAX_X][MAX_Y], int min_y, int max_y)
 {
 	int distance_X;
@@ -171,13 +181,12 @@ target_t findClosestPumpkin_in_zone(drone_t drone, pumpkin_t pumpkinArray[MAX_X]
 			}
 		}
 	}
-
 	return target;
 }
 
-void autoPilot_simple(drone_t *drone, target_t target)// fast, but destroies unripe punpkins on its way
+//ведет дрон к объекту target кратчайшим образом. Допускает наезд на незрелые тыквы.
+void autoPilot_simple(drone_t *drone, target_t target)
 {
-
 	if (((drone->direction) == 1) || ((drone->direction) == 3))
 	{
 		if (target.y > (drone->y))
@@ -202,6 +211,7 @@ void autoPilot_simple(drone_t *drone, target_t target)// fast, but destroies unr
 	}
 }
 
+//движется к объекту target, объезжая незрелые тыквы
 void autoPilot_no_casulties(drone_t *drone, target_t target, pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
 	if (((drone->direction) == 1))
@@ -333,6 +343,7 @@ void autoPilot_no_casulties(drone_t *drone, target_t target, pumpkin_t pumpkinAr
 	}
 }
 
+//движется к объекту target, объезжая незрелые тыквы. Зона действия ограничена координатами min_y и max_y
 void autoPilot_no_casulties_with_zone(drone_t *drone, target_t target, pumpkin_t pumpkinArray[MAX_X][MAX_Y], int min_y, int max_y)
 {
 	if (((drone->direction) == 1))
@@ -466,9 +477,10 @@ void autoPilot_no_casulties_with_zone(drone_t *drone, target_t target, pumpkin_t
 	}
 }
 
+// реакция дрона на объекты на поле
 int pumpkinIsGathered(drone_t *drone, pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
-	int flag = 0;// 0 - no event, 1 - pumpkin gathered, 2 - pumpkin destroied
+	int flag = 0;// 0 - нет события, 1 - тыква собрана, 2 - тыква уничтожена
 
 	if (pumpkinArray[drone->x][drone->y].pumpkin_symbol == 'o')
 	{

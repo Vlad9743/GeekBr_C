@@ -1,5 +1,6 @@
 #include "field.h"
 
+//создает массив тыкв, расставляя их по грядкам
 int initField(pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
 	int pumpkinsTotal = 0;
@@ -29,6 +30,7 @@ int initField(pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 	return pumpkinsTotal;
 }
 
+//случайным образом переводит тыквы в состояние - зрелая
 void pumpkinIsRipe(pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 {
 	time_t t;
@@ -43,6 +45,7 @@ void pumpkinIsRipe(pumpkin_t pumpkinArray[MAX_X][MAX_Y])
 	}
 }
 
+//переведет тыкву с указанными координатами в состояние - зрелая
 void pumpkinIsRipe_manual(pumpkin_t pumpkinArray[MAX_X][MAX_Y], int x, int y)
 {
 	pumpkinArray[x][y].pumpkin_state = 1;

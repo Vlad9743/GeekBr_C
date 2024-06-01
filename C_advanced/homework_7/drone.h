@@ -14,10 +14,7 @@ typedef struct drone_t{
 	struct cart_t * carts;
 	size_t carts_number;
     int direction; //1 - left, 2 - up, 3 - right, 4 - down
-	int speed;
 }  drone_t;
-
-
 
 struct drone_t initDrone(int x, int y);
 

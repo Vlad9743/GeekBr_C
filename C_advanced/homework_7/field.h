@@ -1,9 +1,5 @@
-//#include <stdio.h>
 #include <stdlib.h>
-//#include <unistd.h>
-//#include <termios.h>
 #include <time.h>
-//#include <fcntl.h>
 
 #define MAX_X 26
 #define MAX_Y 17

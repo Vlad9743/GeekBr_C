@@ -1,9 +1,9 @@
 #include "drone.h"
 
+// функция для создания объекта дрона
 struct drone_t initDrone(int x, int y){
 	drone_t drone;
     drone.direction = 1;
-	drone.speed = 1;
 	drone.x = x;
 	drone.y = y;
 	drone.carts_number = 0;
@@ -11,6 +11,7 @@ struct drone_t initDrone(int x, int y){
 	return drone;
 }
 
+// ручное управление дроном
 void turnDrone(drone_t *drone, char key)
 {
 	if ((key == 'a' || key == 'A') && (drone->direction != 3))
@@ -31,6 +32,7 @@ void turnDrone(drone_t *drone, char key)
     }
 }
 
+//добавит тележку к хвосту дрона
 void addCart(drone_t *drone)
 {
 	drone->carts_number++;
@@ -45,6 +47,7 @@ void addCart(drone_t *drone)
 	drone->carts[0].y == drone->y;
 }
 
+//проверка на пересечение дрона с хвостом тележек
 int selfCrashCheck(drone_t drone)
 {
 	int crash = 0;

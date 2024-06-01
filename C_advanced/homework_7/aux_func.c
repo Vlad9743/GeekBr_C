@@ -1,5 +1,6 @@
 #include "aux_func.h"
 
+//вывод счетчиков собранных и уничтоженных тыкв
 void printScore(int pumpkinGathered, int pumpkinDestroied)
 {
 	printf("--------------------------\n");
