@@ -28,12 +28,6 @@ typedef struct food_t{
 	char food_symbol;
 } food_t;
 
-typedef struct menuTable
-{
-    int pointer[3];
-    char menuLines[3];
-}menuTable;
-
 struct snake_t initSnake(int x, int y, size_t tsize){
 	struct snake_t snake;
     snake.direction = 1;
@@ -49,10 +43,7 @@ struct snake_t initSnake(int x, int y, size_t tsize){
 	return snake;
 }
 
-
-//---------------------------------------------------------//
-
-void printSnakeAndFood(struct snake_t snake, struct snake_t snake2, food_t foodArray[], int foodAmount){
+void printSnakeAndFood(struct snake_t snake, food_t foodArray[], int foodAmount){
 	char matrix[MAX_X][MAX_Y];
 	for (int i = 0; i < MAX_X; ++i){
 		for (int j = 0; j < MAX_Y; ++j)
@@ -70,37 +61,11 @@ void printSnakeAndFood(struct snake_t snake, struct snake_t snake2, food_t foodA
 	for (int i = 0; i < snake.tsize; ++i){
 	    matrix[snake.tail[i].x][snake.tail[i].y] = '*';
 	}
-
-	matrix[snake2.x][snake2.y] = '%';
-	for (int i = 0; i < snake2.tsize; ++i){
-	    matrix[snake2.tail[i].x][snake2.tail[i].y] = '+';
-	}	
-
+		
 	for (int j = 0; j < MAX_Y; ++j){
 		for (int i = 0; i < MAX_X; ++i)
 		{
-			if (matrix[i][j] == ' ')
-			{
-				printf("%c", matrix[i][j]);
-			}
-			else if (matrix[i][j] == '@' || matrix[i][j] == '*')
-			{
-				printf("\033[0;32m");//set green color
-				printf("%c", matrix[i][j]);
-				printf("\033[0m");//reset color
-			}
-			else if (matrix[i][j] == '%' || matrix[i][j] == '+')
-			{
-				printf("\033[0;31m");//set red color
-				printf("%c", matrix[i][j]);
-				printf("\033[0m");//reset color
-			}
-			else if (matrix[i][j] == '#')
-			{
-				printf("\033[0;34m"); //set blue color
-				printf("%c", matrix[i][j]);
-				printf("\033[0m");//reset color
-			}
+			printf("%c", matrix[i][j]);
 		}
 		printf("\n");
 	}
@@ -205,41 +170,26 @@ snake_t moveSnake(snake_t snake)
 	return snake;
 }
 
-void turnSnake(snake_t *snake, snake_t *snake2, char key)
+snake_t turnSnake(snake_t snake, char key)
 {
-	if ((key == 'a' || key == 'A') && (snake->direction != 3))
+	if ((key == 'a' || key == 'A') && (snake.direction != 3))
     {
-        snake->direction = 1;
+        snake.direction = 1;
     }
-    else if ((key == 'w' || key == 'W') && (snake->direction != 4))
+    else if ((key == 'w' || key == 'W') && (snake.direction != 4))
     {
-        snake->direction = 2;
+        snake.direction = 2;
     }
-    else if ((key == 'd' || key == 'D') && (snake->direction != 1))
+    else if ((key == 'd' || key == 'D') && (snake.direction != 1))
     {
-        snake->direction = 3;
+        snake.direction = 3;
     }
-    else if ((key == 's' || key == 'S') && (snake->direction != 2))
+    else if ((key == 's' || key == 'S') && (snake.direction != 2))
     {
-        snake->direction = 4;
+        snake.direction = 4;
     }
-	//-----------------------------------------------------------//
-	if ((key == 'j' || key == 'J') && (snake2->direction != 3))
-    {
-        snake2->direction = 1;
-    }
-    else if ((key == 'i' || key == 'I') && (snake2->direction != 4))
-    {
-        snake2->direction = 2;
-    }
-    else if ((key == 'l' || key == 'L') && (snake2->direction != 1))
-    {
-        snake2->direction = 3;
-    }
-    else if ((key == 'k' || key == 'K') && (snake2->direction != 2))
-    {
-        snake2->direction = 4;
-    }
+
+	return snake;
 }
 
 void initFood(food_t foodArray[], int foodAmount, int snake_line)
@@ -260,230 +210,62 @@ void initFood(food_t foodArray[], int foodAmount, int snake_line)
 	}
 }
 
-int foodIsEaten(snake_t *snake, snake_t *snake2,food_t foodArray[], int foodAmount)
+int foodIsEaten(snake_t snake, food_t foodArray[], int foodAmount)
 {
 	int flag = 0;
 	for (int i = 0; i < foodAmount; i++)
 	{
-		if (snake->x == foodArray[i].food_x || snake2->x == foodArray[i].food_x)
+		if (snake.x == foodArray[i].food_x)
 		{
-			if (snake->y == foodArray[i].food_y || snake2->y == foodArray[i].food_y)
+			if (snake.y == foodArray[i].food_y)
 			{
-				if (foodArray[i].food_symbol == '#')
-				{
-					foodArray[i].food_symbol = ' ';
-					flag = 1;
-					snake->speed += 1;
-				}
+				foodArray[i].food_symbol = ' ';
+				flag = 1;
 			}
 		}
 	}
 	return flag;
 }
 
-void autoSnake(snake_t *snake, food_t foodArray[], int foodAmount)
-{
-
-	int min_dist = MAX_X + MAX_Y;
-	int closest_food_num = 0;
-	int temp = 0;
-	for (int i = 0; i < foodAmount; i++)
-	{
-		if (foodArray[i].food_symbol == '#')
-		{
-			temp = abs((snake->x) - foodArray[i].food_x) + abs((snake->y) - foodArray[i].food_y);
-			if (temp < min_dist)
-			{
-				min_dist = temp;
-				closest_food_num = i;
-			}
-		}
-	}
-
-	if (snake->direction == 1 || snake->direction == 3)
-	{
-		if (foodArray[closest_food_num].food_y > snake->y)
-		{
-			snake->direction = 4;
-		}
-		else if (foodArray[closest_food_num].food_y < snake->y)
-		{
-			snake->direction = 2;
-		}
-	}
-	else if (snake->direction == 2 || snake->direction == 4)
-	{
-		if (foodArray[closest_food_num].food_x > snake->x)
-		{
-			snake->direction = 3;
-		}
-		else if (foodArray[closest_food_num].food_x < snake->x)
-		{
-			snake->direction = 1;
-		}
-	}
-}
-
-//----------------------------------------------------------------//
-menuTable initMenu(menuTable *menu)
-{
-    menu->pointer[0] = 1;
-    menu->pointer[1] = 0;
-    menu->pointer[2] = 0;
-
-    menu->menuLines[0] = 'p';
-    menu->menuLines[1] = 'a';
-    menu->menuLines[2] = 'q';
-}
-
-void printMenu(menuTable *menu)
-{
-    printf("------------------MENU------------------\n\n\n");
-    for (int i = 0; i < 3; i++)
-    {
-        if (menu->pointer[i] == 1)
-        {
-            printf("-->  ");
-        }
-        else
-        {
-            printf("     ");
-        }
-        if (menu->menuLines[i] == 'p')
-        {
-            printf("PLAY\n");
-        }
-        else if (menu->menuLines[i] == 'a')
-        {
-            printf("SECOND SNAKE MODE --> AUTO\n");
-        }
-        else if (menu->menuLines[i] == 's')
-        {
-            printf("SECOND SNAKE MODE --> PLAYER\n");
-        }
-        else if (menu->menuLines[i] == 'q')
-        {
-            printf("QUIT\n");
-        }
-    }
-    printf("\n\n");
-    printf("---------------------------------------\n");
-    printf("Use W and D to move and SPACE to enter\n\n\n");
-}
-
-int menuSelect(menuTable *menu)
-{
-    int currentPosition = 0;
-    char key;
-    int endMenu = 0;
-
-    while (!endMenu){
-        system("clear");
-        printMenu(menu);
-        key = getch();
-        if (key == 'w')
-        {
-            currentPosition--;
-            if (currentPosition < 0)
-            {
-                currentPosition = 2;
-            }
-        }
-        else if (key == 's')
-        {
-            currentPosition++;
-            if (currentPosition > 2)
-            {
-                currentPosition = 0;
-            }
-        }
-        else if (key == ' ')
-        {
-            if (currentPosition == 0 || currentPosition == 2)
-            {
-                endMenu = 1;
-            }
-            else if (currentPosition == 1 && menu->menuLines[1] == 'a')
-            {
-                menu->menuLines[1] = 's';
-            }
-            else if (currentPosition == 1 && menu->menuLines[1] == 's')
-            {
-                menu->menuLines[1] = 'a';
-            }
-        }
-
-        for (int i = 0; i < 3; i++)
-        {
-            menu->pointer[i] = 0;
-        }
-        menu->pointer[currentPosition] = 1;
-    }    
-    return currentPosition;
-}
-//----------------------------------------------------------------//
-
 
 int main(void)
 {
-	int secondSnakeMode = 1;
-    int menuChose = 2;
-
-	int snake_start_x = 7;
+	int snake_start_x = 10;
 	int snake_start_y = 5;
-	int snake_start_length = 4;
+	int snake_start_length = 5;
 
-	int snake2_start_x = 7;
-	int snake2_start_y = 10;
-	int snake2_start_length = 4;
+	struct timespec snake_delay, snake_delay2;
+	snake_delay.tv_sec = 0;
+	snake_delay.tv_nsec = 500000000;
 
-	menuTable mainMenu;
-    initMenu(&mainMenu);
-	menuChose =  menuSelect(&mainMenu);
+	int foodAmount = 5;
+	struct food_t foodArray[foodAmount];
+	initFood(foodArray, foodAmount, snake_start_y);
 
-	if (menuChose == 0)
-    {
-        if (mainMenu.menuLines[1] == 's') secondSnakeMode = 0;
-    
-		struct timespec snake_delay, snake_delay2;
-		snake_delay.tv_sec = 0;
-		snake_delay.tv_nsec = 500000000;
+	struct snake_t snake = initSnake(snake_start_x, snake_start_y, snake_start_length);
+	printSnakeAndFood(snake, foodArray, foodAmount);
+    char dir_key = 'a';
 
-		int foodAmount = 5;
-		struct food_t foodArray[foodAmount];
-		initFood(foodArray, foodAmount, snake_start_y);
-
-		struct snake_t snake = initSnake(snake_start_x, snake_start_y, snake_start_length);
-		struct snake_t snake2 = initSnake(snake2_start_x, snake2_start_y, snake2_start_length);
-		printSnakeAndFood(snake, snake2, foodArray, foodAmount);
-		char dir_key = 'a';
-
-
-
-
-		while(snake.speed <= foodAmount)
+	while(snake.speed <= foodAmount)
+	{
+		if (kbhit())
 		{
-			if (kbhit())
-			{
-				dir_key = getch();
-				turnSnake(&snake, &snake2, dir_key);
-			}
-			if (secondSnakeMode)
-			{
-				autoSnake(&snake2, foodArray, foodAmount);
-			}
-
-			snake = moveSnake(snake);
-			snake2 = moveSnake(snake2);
-			if (foodIsEaten(&snake, &snake2, foodArray, foodAmount))
-			{
-				snake_delay.tv_nsec /= snake.speed;
-			}
-			system("clear");
-			printSnakeAndFood(snake, snake2, foodArray, foodAmount);
-			nanosleep(&snake_delay, &snake_delay2);
+			dir_key = getch();
+			snake = turnSnake(snake, dir_key);
 		}
+        
+        
+		snake = moveSnake(snake);
+		if (foodIsEaten(snake, foodArray, foodAmount))
+		{
+			snake.speed++;
+			snake_delay.tv_nsec /= snake.speed;
+		}
+		system("clear");
+		printSnakeAndFood(snake, foodArray, foodAmount);
+		nanosleep(&snake_delay, &snake_delay2);
 	}
-	//printf("Current level: %d\n", snake.speed - 1);
+
+	printf("Current level: %d\n", snake.speed - 1);
 	return 0;
 }
